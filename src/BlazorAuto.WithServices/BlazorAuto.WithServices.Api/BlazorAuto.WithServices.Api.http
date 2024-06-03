@@ -1,0 +1,6 @@
+@BlazorAuto.WithServices.Api_HostAddress = http://localhost:5068
+
+GET {{BlazorAuto.WithServices.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

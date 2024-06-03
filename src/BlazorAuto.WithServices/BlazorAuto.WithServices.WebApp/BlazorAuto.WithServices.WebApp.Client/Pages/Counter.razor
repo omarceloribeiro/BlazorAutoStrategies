@@ -1,0 +1,58 @@
+﻿@page "/counter"
+@rendermode InteractiveAuto
+@attribute [StreamRendering]
+
+@using BlazorAuto.WithServices.ApplicationShared.Handlers.Responses
+@using BlazorAuto.WithServices.ApplicationShared.Interfaces.Services
+
+@inject IProductAppService _productAppService
+
+<PageTitle>Counter</PageTitle>
+
+<h1>Counter</h1>
+
+<p role="status">Current count: @currentCount</p>
+
+<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+
+
+@if (products != null)
+{
+    if (products.Any())
+    {
+        foreach (var product in products)
+        {
+            <div>@product.Name</div>
+        }
+    }
+    else
+    {
+        <p>No products returned</p>
+    }
+}
+else
+{
+    <p>Loading ...</p>
+}
+
+@code {
+    private int currentCount = 0;
+
+    private void IncrementCount()
+    {
+        currentCount++;
+    }
+
+    IEnumerable<ProductReponse>? products = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadProducts();
+    }
+
+    async Task LoadProducts()
+    {
+        products = await _productAppService.ReadAllProduct();
+    }
+
+}

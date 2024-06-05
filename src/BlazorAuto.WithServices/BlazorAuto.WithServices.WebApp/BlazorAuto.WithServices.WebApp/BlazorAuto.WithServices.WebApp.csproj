@@ -8,9 +8,21 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\BlazorAuto.WithServices.Application\BlazorAuto.WithServices.Application.csproj" />
+    <ProjectReference Include="..\..\BlazorAuto.WithServices.DataEF\BlazorAuto.WithServices.DataEF.csproj" />
     <ProjectReference Include="..\..\BlazorAuto.WithServices.Data\BlazorAuto.WithServices.Data.csproj" />
     <ProjectReference Include="..\BlazorAuto.WithServices.WebApp.Client\BlazorAuto.WithServices.WebApp.Client.csproj" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid.EntityFrameworkAdapter" Version="8.0.4" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.6">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.4">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.2" />
   </ItemGroup>
 
 </Project>

@@ -1,0 +1,58 @@
+﻿@page "/products-wasm"
+@rendermode InteractiveAuto
+@using BlazorAuto.WithServices.ApplicationShared.Handlers.Responses
+@using BlazorAuto.WithServices.ApplicationShared.Interfaces.Services
+@inject IProductAppService _productAppService
+
+<PageTitle>Index</PageTitle>
+
+<h1>Index</h1>
+
+<p>
+    <a href="products-wasm/create">Create New</a>
+</p>
+
+@if (products != null)
+{
+    if (products.Any())
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Category</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (var item in products)
+                {
+                    <tr>
+                        <td>@item.Name</td>
+                        <td>@item.Price</td>
+                        <td>@item.Category.Title (@item.Category.Id)</td>
+                        <td>
+                            <a href="@($"products-wasm/edit?id={item.Id}")">Edit</a> |
+                            <a href="@($"products-wasm/details?id={item.Id}")">Details</a> |
+                            <a href="@($"products-wasm/delete?id={item.Id}")">Delete</a>
+                        </td>
+                    </tr>
+                }
+
+            </tbody>
+
+        </table>
+    }
+}
+
+@code {
+    List<ProductReponse>? products = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var productsResponse = await _productAppService.ReadAllProduct();
+        products = productsResponse?.ToList() ?? new();
+    }
+}

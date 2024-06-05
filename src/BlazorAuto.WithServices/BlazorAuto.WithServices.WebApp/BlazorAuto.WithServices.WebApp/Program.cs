@@ -8,24 +8,42 @@ using BlazorAuto.WithServices.Core.Interfaces.Repository;
 using BlazorAuto.WithServices.Core.Interfaces.Services;
 using BlazorAuto.WithServices.Core.Services;
 using BlazorAuto.WithServices.Data.Repositories;
-using BlazorAuto.WithServices.WebApp.Api.Endpoints;
+using BlazorAuto.WithServices.DataEF;
+using BlazorAuto.WithServices.DataEF.Repositories;
+
 using BlazorAuto.WithServices.WebApp.Components;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using BlazorAuto.WithServices.WebApp.Api.CustomEndpoints;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// EF Core
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+builder.Services.AddDbContext<AppDbContext>(options => 
+{
+    options.UseSqlServer(connectionString);
+});
+
+builder.Services.AddQuickGridEntityFrameworkAdapter();;
+
 // domain services
-builder.Services.AddSingleton<IProductDomainService, ProductDomainService>();
-builder.Services.AddSingleton<IProductCategoryDomainService, ProductCategoryDomainService>();
+builder.Services.AddScoped<IProductDomainService, ProductDomainService>();
+builder.Services.AddScoped<IProductCategoryDomainService, ProductCategoryDomainService>();
 
 // repsitories
-builder.Services.AddSingleton<IProductRepository, ProductRepository>();
-builder.Services.AddSingleton<IProductCategoryRepository, ProductCategoryRepository>();
+//builder.Services.AddScoped<IProductRepository, ProductInMemoryRepository>();
+//builder.Services.AddScoped<IProductCategoryRepository, ProductCategoryInMemoryRepository>();
+
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IProductCategoryRepository, ProductCategoryRepository>();
 
 // handlers
-builder.Services.AddSingleton<IRequestHandler<CreateOrUpdateProductRequest, ProductReponse>, CreateProductHandler>();
+builder.Services.AddScoped<IRequestHandler<CreateOrUpdateProductRequest, ProductReponse>, CreateProductHandler>();
 
 // app services
-builder.Services.AddSingleton<IProductAppService, ProductAppService>();
+builder.Services.AddScoped<IProductAppService, ProductAppService>();
+builder.Services.AddScoped<IProductCategoryAppService, ProductCategoryAppService>();
 
 
 
@@ -58,5 +76,6 @@ app.MapRazorComponents<App>()
     .AddInteractiveWebAssemblyRenderMode()
     .AddAdditionalAssemblies(typeof(BlazorAuto.WithServices.WebApp.Client._Imports).Assembly);
 
-app.MapProductEndpoints();
+// for some reason this extension method throws error when scaffolding. need to comment that to scaffold work
+app.MapCustomProductEndpoints();
 app.Run();

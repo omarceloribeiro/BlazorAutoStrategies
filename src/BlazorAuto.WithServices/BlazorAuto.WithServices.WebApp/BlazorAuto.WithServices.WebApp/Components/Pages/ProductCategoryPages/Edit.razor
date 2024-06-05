@@ -1,0 +1,96 @@
+﻿@page "/ProductCategories/edit"
+@inject BlazorAuto.WithServices.DataEF.AppDbContext DB
+@using BlazorAuto.WithServices.Core.Models
+@inject NavigationManager NavigationManager
+@using Microsoft.EntityFrameworkCore
+
+<PageTitle>Edit</PageTitle>
+
+<h1>Edit</h1>
+
+<h4>ProductCategory</h4>
+<hr />
+@if (ProductCategory is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm method="post" Model="ProductCategory" OnValidSubmit="UpdateProductCategory" FormName="edit" Enhance>
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+                <input type="hidden" name="ProductCategory.Id" value="@ProductCategory.Id" />
+                <div class="mb-3">
+                    <label for="title" class="form-label">Title:</label>
+                    <InputText id="title" @bind-Value="ProductCategory.Title" class="form-control" />
+                    <ValidationMessage For="() => ProductCategory.Title" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description:</label>
+                    <InputText id="description" @bind-Value="ProductCategory.Description" class="form-control" />
+                    <ValidationMessage For="() => ProductCategory.Description" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="order" class="form-label">Order:</label>
+                    <InputNumber id="order" @bind-Value="ProductCategory.Order" class="form-control" />
+                    <ValidationMessage For="() => ProductCategory.Order" class="text-danger" />
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </EditForm>
+        </div>
+    </div>
+}
+
+<div>
+    <a href="/productcategories">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    public int Id { get; set; }
+
+    [SupplyParameterFromForm]
+    public ProductCategory? ProductCategory { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        ProductCategory ??= await DB.ProductCategories.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (ProductCategory is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    // To protect from overposting attacks, enable the specific properties you want to bind to.
+    // For more details, see https://aka.ms/RazorPagesCRUD.
+    public async Task UpdateProductCategory()
+    {
+        DB.Attach(ProductCategory!).State = EntityState.Modified;
+
+        try
+        {
+            await DB.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!ProductCategoryExists(ProductCategory!.Id))
+            {
+                NavigationManager.NavigateTo("notfound");
+            }
+            else
+            {
+                throw;
+            }
+        }
+
+        NavigationManager.NavigateTo("/productcategories");
+    }
+
+    bool ProductCategoryExists(int id)
+    {
+        return DB.ProductCategories.Any(e => e.Id == id);
+    }
+}

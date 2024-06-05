@@ -19,22 +19,29 @@ namespace BlazorAuto.WithServices.Application.Services
             _createProductHandler = createProductHandler;
             _productDomainService = productDomainService;
         }
-        public Task<ProductReponse> CreateProduct(CreateOrUpdateProductRequest productRequest)
+        public async ValueTask<ProductReponse> CreateProduct(CreateOrUpdateProductRequest productRequest)
         {
-            return _createProductHandler.Handle(productRequest);
+            var result = await _createProductHandler.Handle(productRequest);
+            return result;
         }
 
-        public Task DeleteProductById(int id)
+        public ValueTask DeleteProductById(int id)
         {
             return _productDomainService.Delete(id);
         }
 
-        public Task<ProductReponse> GetProductById(int id)
+        public async ValueTask<ProductReponse?> GetProductById(int id)
         {
-            throw new NotImplementedException();
+            var product = await _productDomainService.Read(id);
+            if (product != null)
+            {
+                return new ProductReponse(product.Id, product.Name, product.Description ?? string.Empty, product.Price, new ProductCategoryResponse(product.CategoryId, product.Category?.Title ?? string.Empty));
+            }
+
+            return null;
         }
 
-        public async Task<IEnumerable<ProductReponse>> ReadAllProduct()
+        public async ValueTask<IEnumerable<ProductReponse>> ReadAllProduct()
         {
             var allItems = await _productDomainService.ReadAll();
             var allItemsResponse = allItems
@@ -45,9 +52,10 @@ namespace BlazorAuto.WithServices.Application.Services
             return allItemsResponse;
         }
 
-        public Task<ProductReponse> UpdateProduct(CreateOrUpdateProductRequest productRequest)
+        public async ValueTask<ProductReponse> UpdateProduct(CreateOrUpdateProductRequest productRequest)
         {
-            throw new NotImplementedException();
+            var result = await _createProductHandler.Handle(productRequest);
+            return result;
         }
     }
 }

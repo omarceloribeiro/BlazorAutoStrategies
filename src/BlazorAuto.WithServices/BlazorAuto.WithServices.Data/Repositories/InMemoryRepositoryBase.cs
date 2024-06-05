@@ -3,30 +3,30 @@ using BlazorAuto.WithServices.Core.Models;
 
 namespace BlazorAuto.WithServices.Data.Repositories
 {
-    internal abstract class RepositoryBase<TEntity> : IRepositoryBase<TEntity>
+    internal abstract class InMemoryRepositoryBase<TEntity> : IRepositoryBase<TEntity>
         where TEntity : ModelBase
     {
-        public Task<TEntity> Create(TEntity model)
+        public ValueTask<TEntity> Create(TEntity model)
         {
             throw new NotImplementedException();
         }
 
-        public Task Delete(int id)
+        public ValueTask Delete(int id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<TEntity> Read(int id)
+        public ValueTask<TEntity?> Read(int id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<TEntity>> ReadAll()
+        public ValueTask<IEnumerable<TEntity>> ReadAll()
         {
             throw new NotImplementedException();
         }
 
-        public Task<TEntity> Update(TEntity model)
+        public ValueTask<TEntity> Update(TEntity model)
         {
             throw new NotImplementedException();
         }

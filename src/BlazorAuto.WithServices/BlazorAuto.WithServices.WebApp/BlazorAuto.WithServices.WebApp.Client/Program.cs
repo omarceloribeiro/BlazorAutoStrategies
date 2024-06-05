@@ -7,6 +7,8 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 //string apiSiteAddress = "https://localhost:7062";
 string apiSiteAddress = "https://localhost:7175";
 builder.Services.AddSingleton(new HttpClient() { BaseAddress = new Uri(apiSiteAddress) });
-builder.Services.AddSingleton<IProductAppService, ProductClientAppService>();
 
+
+builder.Services.AddSingleton<IProductAppService, ProductClientAppService>();
+builder.Services.AddSingleton<IProductCategoryAppService, ProductCategoryClientAppService>();
 await builder.Build().RunAsync();

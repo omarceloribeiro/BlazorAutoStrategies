@@ -14,27 +14,27 @@ namespace BlazorAuto.WithServices.Core.Services
             Repository = repository;
         }
 
-        public virtual Task<TEntity> Create(TEntity model)
+        public virtual ValueTask<TEntity> Create(TEntity model)
         {
             return Repository.Create(model);
         }
 
-        public virtual Task Delete(int id)
+        public virtual ValueTask Delete(int id)
         {
             return Repository.Delete(id);
         }
 
-        public virtual Task<TEntity> Read(int id)
+        public virtual ValueTask<TEntity?> Read(int id)
         {
             return Repository.Read(id);
         }
 
-        public virtual Task<IEnumerable<TEntity>> ReadAll()
+        public virtual ValueTask<IEnumerable<TEntity>> ReadAll()
         {
             return Repository.ReadAll();
         }
 
-        public virtual Task<TEntity> Update(TEntity model)
+        public virtual ValueTask<TEntity> Update(TEntity model)
         {
             return Repository.Update(model);
         }

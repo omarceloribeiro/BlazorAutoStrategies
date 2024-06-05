@@ -12,7 +12,7 @@ namespace BlazorAuto.WithServices.Core.Services
         {
         }
 
-        public override Task<Product> Create(Product model)
+        public override ValueTask<Product> Create(Product model)
         {
             ArgumentNullException.ThrowIfNull(model);
             ProductInvalidException.ValidatePriceNegative(model);
@@ -20,12 +20,15 @@ namespace BlazorAuto.WithServices.Core.Services
             return base.Create(model);
         }
 
-        public override Task<Product> Update(Product model)
+        public override async ValueTask<Product> Update(Product model)
         {
             ArgumentNullException.ThrowIfNull(model);
             ProductInvalidException.ValidatePriceNegative(model);
 
-            return base.Update(model);
+            //var modelToUpdate = await base.Read(model.Id);
+            //modelToUpdate!.Description = model.Description;
+            
+            return await base.Update(model);
         }
     }
 

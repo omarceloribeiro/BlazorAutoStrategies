@@ -16,7 +16,7 @@ namespace BlazorAuto.WithServices.WebApp.Client.Services
         {
             _httpClient = httpClient;
         }
-        public async Task<ProductReponse> CreateProduct(CreateOrUpdateProductRequest productRequest)
+        public async ValueTask<ProductReponse> CreateProduct(CreateOrUpdateProductRequest productRequest)
         {
             var response = await _httpClient.PostAsJsonAsync("api/products", productRequest);
             //string jsonContent = await response.Content.ReadAsStringAsync();
@@ -29,20 +29,19 @@ namespace BlazorAuto.WithServices.WebApp.Client.Services
             return productResponse;
         }
 
-        public async Task DeleteProductById(int id)
+        public async ValueTask DeleteProductById(int id)
         {
             await _httpClient.DeleteAsync($"api/products/{id}");
         }
 
-        public async Task<ProductReponse?> GetProductById(int id)
+        public async ValueTask<ProductReponse?> GetProductById(int id)
         {
             var response = await _httpClient.GetFromJsonAsync<ProductReponse>($"api/products/{id}");
             return response;
         }
 
-        public async Task<IEnumerable<ProductReponse>> ReadAllProduct()
+        public async ValueTask<IEnumerable<ProductReponse>> ReadAllProduct()
         {
-            await Task.Delay(2000);
             var response = _httpClient.GetFromJsonAsAsyncEnumerable<ProductReponse>($"api/products");
             var responseList = await response.ToListAsync();
 
@@ -60,9 +59,12 @@ namespace BlazorAuto.WithServices.WebApp.Client.Services
             //return response;
         }
 
-        public Task<ProductReponse> UpdateProduct(CreateOrUpdateProductRequest productRequest)
+        public async ValueTask<ProductReponse> UpdateProduct(CreateOrUpdateProductRequest productRequest)
         {
-            throw new NotImplementedException();
+            var response = await _httpClient.PostAsJsonAsync("api/products", productRequest, CancellationToken.None);
+            var responseResult = await response.Content.ReadFromJsonAsync<ProductReponse>();
+
+            return responseResult!;
         }
 
         

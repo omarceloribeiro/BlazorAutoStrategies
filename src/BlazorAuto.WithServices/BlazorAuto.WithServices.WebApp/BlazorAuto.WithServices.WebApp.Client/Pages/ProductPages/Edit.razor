@@ -1,0 +1,150 @@
+﻿@page "/Products-wasm/edit"
+@rendermode InteractiveAuto
+@using BlazorAuto.WithServices.ApplicationShared.Handlers.Responses
+@using BlazorAuto.WithServices.ApplicationShared.Interfaces.Services
+@inject NavigationManager NavigationManager
+@inject IProductAppService _productService
+@inject IProductCategoryAppService _categoryService
+
+<PageTitle>Edit</PageTitle>
+
+<h1>Edit</h1>
+
+<h4>Product</h4>
+<hr />
+@if (Product is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm method="post" Model="Product" OnValidSubmit="UpdateProduct" FormName="edit" Enhance>
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+                <input type="hidden" name="Product.Id" value="@Product.Id" />
+                <div class="mb-3">
+                    <label for="name" class="form-label">Name:</label>
+                    <InputText id="name" @bind-Value="Product.Name" class="form-control" />
+                    <ValidationMessage For="() => Product.Name" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description:</label>
+                    <InputText id="description" @bind-Value="Product.Description" class="form-control" />
+                    <ValidationMessage For="() => Product.Description" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="price" class="form-label">Price:</label>
+                    <InputNumber id="price" @bind-Value="Product.Price" class="form-control" />
+                    <ValidationMessage For="() => Product.Price" class="text-danger" />
+                </div>
+                @* <div class="mb-3">
+            <label for="categoryid" class="form-label">CategoryId:</label>
+            <InputNumber id="categoryid" @bind-Value="Product.CategoryId" class="form-control" />
+            <ValidationMessage For="() => Product.CategoryId" class="text-danger" />
+            </div> *@
+                <div class="mb-3">
+                    <label for="categoryid" class="form-label">Category</label>
+                    <InputSelect id="categoryid" @bind-Value="Product.CategoryId" class="form-control">
+                        <option value="">
+                            Select ...
+                        </option>
+                        @foreach (var category in Categories)
+                        {
+                            <option checked="@(Product.CategoryId == category.Id)"
+                                    value="@category.Id">
+                                @category.Title
+                            </option>
+                        }
+
+                    </InputSelect>
+                    @* <InputNumber id="categoryid" @bind-Value="Product.CategoryId" class="form-control" /> *@
+                    <ValidationMessage For="() => Product.CategoryId" class="text-danger" />
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </EditForm>
+        </div>
+    </div>
+}
+
+<div>
+    <a href="/products-wasm">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    public int Id { get; set; }
+
+    [SupplyParameterFromForm]
+    public ProductInput? Product { get; set; }
+
+    public IEnumerable<ProductCategoryResponse> Categories = new List<ProductCategoryResponse>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Categories = await _categoryService.ReadAll();
+
+        var productResponse = await _productService.GetProductById(Id);
+
+        if (productResponse != null)
+        {
+            Product ??= new ProductInput()
+                {
+                    Id = productResponse.Id,
+                    Name = productResponse.Name,
+                    Description = productResponse.Description,
+                    Price = productResponse.Price,
+                    CategoryId = productResponse.Category.Id,
+                    CategoryName = productResponse.Category.Title
+                };
+        }
+
+
+        if (Product is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    // To protect from overposting attacks, enable the specific properties you want to bind to.
+    // For more details, see https://aka.ms/RazorPagesCRUD.
+    public async Task UpdateProduct()
+    {
+        try
+        {
+            if (Product != null)
+            {
+                var productRequest = new ApplicationShared.Handlers.Requests.CreateOrUpdateProductRequest()
+                    {
+                        Id = Product.Id,
+                        Name = Product.Name ?? string.Empty,
+                        Description = Product.Description ?? string.Empty,
+                        CategoryId = Product.CategoryId ?? 0,
+                        CategoryTitle = Product.CategoryName,
+                        Price = Product.Price ?? 0
+                    };
+
+                await _productService.UpdateProduct(productRequest);
+            }
+        }
+        catch (Exception)
+        {
+            if (!await ProductExists(Product!.Id))
+            {
+                NavigationManager.NavigateTo("notfound");
+            }
+            else
+            {
+                throw;
+            }
+        }
+
+        NavigationManager.NavigateTo("/products-wasm");
+    }
+
+    async Task<bool> ProductExists(int id)
+    {
+        return (await _productService.GetProductById(id)) != null;
+    }
+}

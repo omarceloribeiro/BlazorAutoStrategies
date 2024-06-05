@@ -1,7 +1,7 @@
 ﻿namespace BlazorAuto.WithServices.ApplicationShared.Handlers.Responses
 {
     //public record ProductReponse(int Id, string Name, string Description, decimal Price, int CategoryId, string CategoryTitle);
-    public record ProductReponse(int Id, string Name, string Description, decimal Price, ProductCategoryResponse category);
+    public record ProductReponse(int Id, string Name, string Description, decimal Price, ProductCategoryResponse Category);
     public record ProductCategoryResponse(int Id, string Title);
     //{
     //    //public int Id { get; set; }

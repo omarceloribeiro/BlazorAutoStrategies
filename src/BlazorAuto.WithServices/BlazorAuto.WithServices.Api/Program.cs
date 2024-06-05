@@ -17,8 +17,8 @@ builder.Services.AddSingleton<IProductDomainService, ProductDomainService>();
 builder.Services.AddSingleton<IProductCategoryDomainService, ProductCategoryDomainService>();
 
 // repsitories
-builder.Services.AddSingleton<IProductRepository, ProductRepository>();
-builder.Services.AddSingleton<IProductCategoryRepository, ProductCategoryRepository>();
+builder.Services.AddSingleton<IProductRepository, ProductInMemoryRepository>();
+builder.Services.AddSingleton<IProductCategoryRepository, ProductCategoryInMemoryRepository>();
 
 // handlers
 builder.Services.AddSingleton<IRequestHandler<CreateOrUpdateProductRequest, ProductReponse>, CreateProductHandler>();

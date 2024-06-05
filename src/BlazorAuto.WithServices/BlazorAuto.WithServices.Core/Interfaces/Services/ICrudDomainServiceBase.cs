@@ -5,10 +5,10 @@ namespace BlazorAuto.WithServices.Core.Interfaces.Services
     public interface ICrudDomainServiceBase<TEntity>
         where TEntity : ModelBase
     {
-        Task<TEntity> Create(TEntity model);
-        Task<TEntity> Read(int id);
-        Task<TEntity> Update(TEntity model);
-        Task Delete(int id);
-        Task<IEnumerable<TEntity>> ReadAll();
+        ValueTask<TEntity> Create(TEntity model);
+        ValueTask<TEntity?> Read(int id);
+        ValueTask<TEntity> Update(TEntity model);
+        ValueTask Delete(int id);
+        ValueTask<IEnumerable<TEntity>> ReadAll();
     }
 }

@@ -20,8 +20,11 @@ namespace BlazorAuto.WithServices.Application.Handlers
         {
             Product product = new Product()
             {
+                Id = request.Id,
                 Name = request.Name,
+                Description = request.Description,
                 Price = request.Price,
+                CategoryId = request.CategoryId,
                 Category = new ProductCategory()
                 {
                      Title = request.CategoryTitle ?? string.Empty,
@@ -34,7 +37,16 @@ namespace BlazorAuto.WithServices.Application.Handlers
             //    product.Category.Title = request.CategoryTitle;
             //}
 
-            Product productCreated = await _productDomainService.Create(product);
+            if (request.Id > 0)
+            {
+
+            }
+            Product productSaved;
+
+            if (request.Id > 0)
+                productSaved = await _productDomainService.Update(product);
+            else
+                productSaved = await _productDomainService.Create(product);
 
             //ProductReponse productReponse = new(
             //    productCreated.Id,
@@ -45,11 +57,11 @@ namespace BlazorAuto.WithServices.Application.Handlers
             //    productCreated.Category?.Title ?? string.Empty);
 
             ProductReponse productReponse = new(
-                productCreated.Id,
-                productCreated.Name,
-                productCreated.Description ?? string.Empty,
-                productCreated.Price,
-                new ProductCategoryResponse(productCreated.CategoryId, productCreated.Category?.Title ?? string.Empty)
+                productSaved.Id,
+                productSaved.Name,
+                productSaved.Description ?? string.Empty,
+                productSaved.Price,
+                new ProductCategoryResponse(productSaved.CategoryId, productSaved.Category?.Title ?? string.Empty)
                 );
 
             return productReponse;
